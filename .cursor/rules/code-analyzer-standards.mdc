@@ -1,0 +1,36 @@
+---
+description: Code Analyzer Agent — simplicity, ask when unclear, no hallucination, Spock tests and >90% coverage
+alwaysApply: true
+---
+
+# Code Analyzer Agent — Standards
+
+For semantics and scope, see **documents/** (requirements, architecture, MCP feasibility). Follow these mandates when implementing.
+
+## 1. Prefer the simplest solution
+
+- Choose the least complex design that satisfies the requirement (e.g. single class over a deep hierarchy, one table over many if not needed, synchronous over reactive where scaling does not require it).
+- Do not add abstractions, layers, or patterns "for future flexibility" unless the docs or requirements explicitly call for them.
+- Prefer standard library and well-known libraries over custom or niche ones when they do the job.
+
+## 2. Stop and ask when unclear
+
+- If requirements, APIs, or behavior are ambiguous, ask the user before implementing. Do not infer or guess business rules, field semantics, or acceptance criteria.
+- If the design docs conflict with a requested change, ask which source of truth to follow.
+- If a dependency version or technology choice is not specified in the docs (e.g. exact Spring AI or MCP SDK version), ask or propose one and confirm before locking it in.
+
+## 3. Do not hallucinate
+
+- Do not invent APIs, method names, or configuration keys. When using a library (Spring AI, MCP SDK, JavaParser, pgvector), verify names and signatures from the official docs or the codebase; if unsure, cite the source or ask.
+- Do not assume database schema or DTO shapes beyond what is in documents/; define or reference them explicitly (e.g. in the schema migration or a shared doc).
+- Do not add features, MCP tools, or endpoints that are not listed in documents/04-mcp-feasibility.md or the requirements without explicit user request.
+
+## 4. Testing: Spock and coverage
+
+- **Unit tests** MUST be written using the **Spock Framework** (Groovy-based specification style). Use `spock-spring` for Spring integration where tests need the application context. Place test sources in the standard test tree (e.g. `src/test/groovy`; follow the build tool's convention for Groovy + Spock).
+- **Test coverage** MUST be **greater than 90%** (line coverage, or instruction coverage as reported by the chosen tool). Configure the build (e.g. JaCoCo) to fail or report if coverage falls below 90%. New production code should be covered by unit or integration tests; do not merge with coverage below the threshold.
+- Prefer Spock specs for all new unit tests (parser, chunking, services, repositories); use Spock or JUnit for integration tests as appropriate.
+
+## Optional: Java/Spring
+
+- One main package (e.g. `codeanalyzer`) and clear subpackages (e.g. `ingest`, `query`, `mcp`, `model`); use constructor injection; avoid unnecessary interfaces (implement concrete services unless the design doc specifies an interface).

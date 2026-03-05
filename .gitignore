@@ -1,0 +1,37 @@
+# Build
+target/
+build/
+out/
+
+# Maven
+pom.xml.tag
+pom.releaseBackup
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+
+# Gradle (legacy)
+.gradle/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env / local
+.env
+.env.local
+*.local

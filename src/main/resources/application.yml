@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: code-analyzer-agent
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/codeanalyzer}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  ai:
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+    # Embedding model config placeholder — set in env or profile
+    # openai:
+    #   api-key: ${OPENAI_API_KEY}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
