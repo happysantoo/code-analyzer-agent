@@ -187,7 +187,7 @@ flowchart TB
 | **ask_question** | Results are effectively random (no real ranking) | Results are ranked by relevance to the question |
 | **Use case** | Run the app without an API key; test ingest and API shape | Real semantic search and Q&A |
 
-So: **we need a real AI embedding model** to actually “make sense” of questions and return meaningfully ranked code. The stub is only for development and testing.
+So: **we need a real AI embedding model** to actually “make sense” of questions and return meaningfully ranked code. The stub is only for development and testing. To use a real model, add a Spring AI embedding starter (e.g. OpenAI or Ollama) and configure it; see [Embedding model configuration](11-embedding-model-configuration.md). The app requires **1536-dimensional** vectors (schema and adapter); use a model that outputs 1536 dimensions (e.g. OpenAI text-embedding-ada-002).
 
 ```mermaid
 flowchart LR
@@ -243,7 +243,7 @@ The **dimension** is the length of the vector (number of floats). It’s fixed b
 - **Larger** (e.g. 1536): More capacity to encode fine-grained meaning; usually better quality, more storage and slightly more compute.
 - **Smaller** (e.g. 384): Faster and cheaper, but may lose nuance.
 
-This app uses **1536** to align with common APIs (e.g. OpenAI `text-embedding-ada-002`). The pgvector table is defined as `vector(1536)`. If you switch to another model, its dimension must match (or you need a new migration and re-embedding).
+This app uses **1536** to align with common APIs (e.g. OpenAI `text-embedding-ada-002`). The pgvector table is defined as `vector(1536)`, and the pluggable adapter (SpringAiEmbedder) validates that the model’s output dimension is 1536. If you switch to another model, it must produce 1536-dimensional vectors (or you need a schema change and re-embedding); see [Embedding model configuration](11-embedding-model-configuration.md).
 
 ---
 

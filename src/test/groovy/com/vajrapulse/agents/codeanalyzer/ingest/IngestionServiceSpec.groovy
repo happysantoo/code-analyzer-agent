@@ -92,4 +92,35 @@ class IngestionServiceSpec extends Specification {
         0 * snapshotRepository.save(_)
         1 * embeddingPipeline.embedAndStore(5L, _)
     }
+
+    def "analyze saves symbol spans references and containments when parser returns them"() {
+        given:
+        def customParser = Mock(SemanticParser)
+        def span0 = new com.vajrapulse.agents.codeanalyzer.model.Span("B.java", 1, 0, 2, 0)
+        def span1 = new com.vajrapulse.agents.codeanalyzer.model.Span("B.java", 2, 0, 4, 0)
+        def symbols = [
+            new SymbolInfo("B", "CLASS", "public"),
+            new SymbolInfo("m", "METHOD", "public")
+        ]
+        def spans = [span0, span1]
+        def refs = [new ReferenceByIndex(0, 1, "CALLS")]
+        def conts = [new ContainmentByIndex(0, 1)]
+        customParser.parse("B.java", _) >> new ParseResult(symbols, spans, refs, conts)
+        def snapshot = RepoSnapshot.of("sha3", [FileEntry.of("B.java", "class B { void m() {} }")])
+        codeRepository.resolve("path", "HEAD") >> snapshot
+        parserRegistry.getParserFor("B.java") >> Optional.of(customParser)
+        snapshotRepository.findByRepoUrlAndCommitSha("path", "sha3") >> Optional.empty()
+        snapshotRepository.save(_) >> new Snapshot(4L, "path", "sha3", null)
+        artifactRepository.save(_) >> new Artifact(40L, 4L, "B.java")
+        symbolRepository.save(_) >>> [new SymbolRow(401L, 40L, "B", "CLASS", "public"), new SymbolRow(402L, 40L, "m", "METHOD", "public")]
+        chunkingStrategy.chunk(4L, "B.java", _, _) >> [new ChunkDto("CLASS public B", 4L, 40L, 401L, "B.java", "1:0-2:0", "CLASS"), new ChunkDto("METHOD public m", 4L, 40L, 402L, "B.java", "2:0-4:0", "METHOD")]
+        when:
+        def snapshotId = service.analyze("path", "HEAD")
+        then:
+        snapshotId == 4L
+        2 * symbolSpanRepository.save(_)
+        1 * referenceRepository.save(_)
+        1 * containmentRepository.save(_)
+        1 * embeddingPipeline.embedAndStore(4L, _)
+    }
 }

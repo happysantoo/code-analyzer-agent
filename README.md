@@ -15,6 +15,7 @@ A **language-agnostic** code analyzer that checks out source from Git, parses it
 - **Query:** Snapshot-scoped symbols, references, containment, and file content; **ask_question** over one snapshot or a **project** (linked snapshots) via semantic search on pgvector.
 - **Projects:** Create projects and link multiple snapshots for cross-repository Q&A.
 - **REST API:** `POST/GET /api/tools/*` (e.g. `analyze_repository`, `ask_question`, `list_snapshots`, `create_project`). Ready for MCP tool wrapping.
+- **Embedding model (pluggable):** The app uses an `Embedder` abstraction. By default, **StubEmbedder** (zero vectors) is used so the app runs without an API key. For real semantic search, add a Spring AI embedding starter (e.g. OpenAI, Ollama, Bedrock) and set the required properties; the app will use that model for ingest and for **ask_question**. See [Embedding model configuration](documents/11-embedding-model-configuration.md).
 
 ---
 
@@ -96,7 +97,8 @@ To test the agent against a real codebase on your laptop:
    `curl -s "http://localhost:8080/api/tools/search_symbols?snapshot_id=1&limit=10"`
 
 6. **Ask a question (semantic search):**  
-   `curl -s -X POST http://localhost:8080/api/tools/ask_question -H "Content-Type: application/json" -d '{"question": "Where is the main entry point?", "snapshot_id": 1, "top_k": 5}'`
+   `curl -s -X POST http://localhost:8080/api/tools/ask_question -H "Content-Type: application/json" -d '{"question": "Where is the main entry point?", "snapshot_id": 1, "top_k": 5}'`  
+   You must pass **`snapshot_id`** (from `analyze_repository` or `list_snapshots`) or **`project_id`**. If you omit both, the API returns an error message. With the default **StubEmbedder** (no real embedding model), chunks are stored with zero vectors, so ranking is not meaningful; for real semantic search, configure an embedding model (e.g. OpenAI) in `application.yml`.
 
 To tear down: `docker compose down` (add `-v` to remove the database volume).
 

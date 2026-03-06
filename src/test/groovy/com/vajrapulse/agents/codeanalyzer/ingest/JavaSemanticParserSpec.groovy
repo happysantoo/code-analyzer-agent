@@ -1,10 +1,38 @@
 package com.vajrapulse.agents.codeanalyzer.ingest
 
+import com.github.javaparser.JavaParser
+import com.github.javaparser.ast.CompilationUnit
 import spock.lang.Specification
 
 class JavaSemanticParserSpec extends Specification {
 
     def parser = new JavaSemanticParser()
+
+    def "parser with custom JavaParser returning programmatic CU handles types and produces span with default when range empty"() {
+        given:
+        def cu = new CompilationUnit()
+        cu.addClass("ProgrammaticClass")
+        def stubParser = Stub(JavaParser)
+        def parseResult = Stub(com.github.javaparser.ParseResult)
+        parseResult.getResult() >> Optional.of(cu)
+        stubParser.parse(_) >> parseResult
+        def customParser = new JavaSemanticParser(stubParser)
+        when:
+        def result = customParser.parse("Prog.java", "ignored")
+        then:
+        result.symbols().size() >= 1
+        result.symbols().get(0).name() == "ProgrammaticClass"
+        result.spans().size() >= 1
+    }
+
+    def "null content returns empty result"() {
+        when:
+        def result = parser.parse("Foo.java", null)
+        then:
+        result.symbols().isEmpty()
+        result.references().isEmpty()
+        result.containments().isEmpty()
+    }
 
     def "empty content returns empty result"() {
         when:
@@ -88,5 +116,15 @@ public class Baz {
         then:
         result.symbols().size() >= 1
         result.symbols().get(0).kind() == "INTERFACE"
+    }
+
+    def "package-private class produces package visibility"() {
+        given:
+        def content = "class PackagePrivate { void m() {} }"
+        when:
+        def result = parser.parse("P.java", content)
+        then:
+        result.symbols().size() >= 1
+        result.symbols().get(0).visibility() == "package"
     }
 }

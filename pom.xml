@@ -63,6 +63,13 @@
             <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <!-- Embedding API: required for SpringAiEmbedder adapter; version aligned with pgvector -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-model</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <!-- Optional starters (e.g. spring-ai-starter-model-openai) can be added by users for a real embedding model; see README -->
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
@@ -200,7 +207,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.62</minimum>
+                                            <minimum>0.84</minimum>
                                         </limit>
                                     </limits>
                                     <excludes>
@@ -213,8 +220,6 @@
                                         <exclude>**/query/ContainmentNode.class</exclude>
                                         <exclude>**/query/AskQuestionResult.class</exclude>
                                         <exclude>**/store/CodeChunkHit.class</exclude>
-                                        <exclude>**/query/QueryServiceImpl.class</exclude>
-                                        <exclude>**/query/ProjectService.class</exclude>
                                         <exclude>**/mcp/*.class</exclude>
                                         <exclude>**/ingest/CodeRepository.class</exclude>
                                         <exclude>**/ingest/SemanticParser.class</exclude>
@@ -222,6 +227,8 @@
                                         <exclude>**/ingest/EmbeddingPipeline.class</exclude>
                                         <exclude>**/ingest/Embedder.class</exclude>
                                         <exclude>**/store/CodeEmbeddingRepository.class</exclude>
+                                        <exclude>**/ingest/WorkspaceCodeRepository.class</exclude>
+                                        <exclude>**/ingest/CloneCodeRepository.class</exclude>
                                     </excludes>
                                 </rule>
                             </rules>

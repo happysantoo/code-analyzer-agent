@@ -1,4 +1,4 @@
-package com.vajrapulse.agents.codeanalyzer;
+package com.vajrapulse.agents.codeanalyzer.config;
 
 import com.vajrapulse.agents.codeanalyzer.ingest.ChunkingStrategy;
 import com.vajrapulse.agents.codeanalyzer.ingest.CloneCodeRepository;
@@ -8,15 +8,18 @@ import com.vajrapulse.agents.codeanalyzer.ingest.DefaultEmbeddingPipeline;
 import com.vajrapulse.agents.codeanalyzer.ingest.Embedder;
 import com.vajrapulse.agents.codeanalyzer.ingest.EmbeddingPipeline;
 import com.vajrapulse.agents.codeanalyzer.ingest.ParserRegistry;
+import com.vajrapulse.agents.codeanalyzer.ingest.SpringAiEmbedder;
 import com.vajrapulse.agents.codeanalyzer.ingest.StubEmbedder;
 import com.vajrapulse.agents.codeanalyzer.ingest.UrlOrPathCodeRepository;
 import com.vajrapulse.agents.codeanalyzer.ingest.WorkspaceCodeRepository;
 import com.vajrapulse.agents.codeanalyzer.store.CodeEmbeddingRepository;
 import com.vajrapulse.agents.codeanalyzer.store.JdbcCodeEmbeddingRepository;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.nio.file.Path;
@@ -55,6 +58,13 @@ public class IngestionConfig {
     }
 
     @Bean
+    @ConditionalOnBean(EmbeddingModel.class)
+    public Embedder springAiEmbedder(EmbeddingModel embeddingModel) {
+        return new SpringAiEmbedder(embeddingModel);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(Embedder.class)
     public Embedder embedder() {
         return new StubEmbedder();
     }
@@ -70,3 +80,4 @@ public class IngestionConfig {
         return new DefaultEmbeddingPipeline(embedder, codeEmbeddingRepository);
     }
 }
+

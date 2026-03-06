@@ -62,4 +62,15 @@ class UrlOrPathCodeRepositorySpec extends Specification {
         0 * cloneRepo.resolve(_, _)
         result == snap
     }
+
+    def "resolve with blank string delegates to WorkspaceCodeRepository"() {
+        given:
+        def snap = RepoSnapshot.of("x", [])
+        when:
+        def result = resolver.resolve("", "HEAD")
+        then:
+        1 * workspace.resolve("", "HEAD") >> snap
+        0 * cloneRepo.resolve(_, _)
+        result == snap
+    }
 }
