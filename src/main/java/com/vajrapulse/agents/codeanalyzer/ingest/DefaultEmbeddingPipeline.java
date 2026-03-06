@@ -2,7 +2,6 @@ package com.vajrapulse.agents.codeanalyzer.ingest;
 
 import com.vajrapulse.agents.codeanalyzer.store.CodeEmbeddingRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

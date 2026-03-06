@@ -6,9 +6,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +42,7 @@ public class SnapshotJdbcRepository implements SnapshotRepository {
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
                     "INSERT INTO snapshots (repo_url, commit_sha, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
-                    Statement.RETURN_GENERATED_KEYS);
+                    new String[]{"id"});
             ps.setString(1, snapshot.repoUrl());
             ps.setString(2, snapshot.commitSha());
             return ps;

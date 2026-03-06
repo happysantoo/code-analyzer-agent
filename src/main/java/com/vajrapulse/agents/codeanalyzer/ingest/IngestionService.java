@@ -3,6 +3,8 @@ package com.vajrapulse.agents.codeanalyzer.ingest;
 import com.vajrapulse.agents.codeanalyzer.model.Span;
 import com.vajrapulse.agents.codeanalyzer.model.Symbol;
 import com.vajrapulse.agents.codeanalyzer.store.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
  */
 @Service
 public class IngestionService {
+
+    private static final Logger log = LoggerFactory.getLogger(IngestionService.class);
 
     private final CodeRepository codeRepository;
     private final ParserRegistry parserRegistry;
@@ -59,7 +63,9 @@ public class IngestionService {
      */
     @Transactional
     public long analyze(String repoUrlOrPath, String ref) {
+        log.info("analyze_repository started: repo={} ref={}", repoUrlOrPath, ref);
         RepoSnapshot snapshot = codeRepository.resolve(repoUrlOrPath, ref);
+        log.info("resolved repo: commit_sha={} files={}", snapshot.commitSha(), snapshot.files().size());
         Snapshot snapshotRow = snapshotRepository.findByRepoUrlAndCommitSha(repoUrlOrPath, snapshot.commitSha())
                 .orElseGet(() -> snapshotRepository.save(new Snapshot(null, repoUrlOrPath, snapshot.commitSha(), null)));
         long snapshotId = snapshotRow.id();
@@ -121,6 +127,7 @@ public class IngestionService {
         }
 
         embeddingPipeline.embedAndStore(snapshotId, allChunks);
+        log.info("analyze_repository completed: snapshot_id={} files_in_repo={} chunks_embedded={}", snapshotId, snapshot.files().size(), allChunks.size());
         return snapshotId;
     }
 }

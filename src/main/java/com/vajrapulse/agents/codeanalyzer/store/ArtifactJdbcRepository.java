@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class ArtifactJdbcRepository implements ArtifactRepository {
         if (artifact.id() != null) return artifact;
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
-            var ps = con.prepareStatement("INSERT INTO artifacts (snapshot_id, file_path) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            var ps = con.prepareStatement("INSERT INTO artifacts (snapshot_id, file_path) VALUES (?, ?)", new String[]{"id"});
             ps.setLong(1, artifact.snapshotId());
             ps.setString(2, artifact.filePath());
             return ps;

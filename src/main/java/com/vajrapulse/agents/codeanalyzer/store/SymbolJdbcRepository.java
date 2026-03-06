@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class SymbolJdbcRepository implements SymbolRepository {
         if (symbol.id() != null) return symbol;
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
-            var ps = con.prepareStatement("INSERT INTO symbols (artifact_id, name, kind, visibility) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            var ps = con.prepareStatement("INSERT INTO symbols (artifact_id, name, kind, visibility) VALUES (?, ?, ?, ?)", new String[]{"id"});
             ps.setLong(1, symbol.artifactId());
             ps.setString(2, symbol.name());
             ps.setString(3, symbol.kind());

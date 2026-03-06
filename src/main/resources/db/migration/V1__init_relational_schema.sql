@@ -44,16 +44,16 @@ CREATE TABLE symbol_spans (
 
 CREATE INDEX idx_symbol_spans_file_path ON symbol_spans (file_path);
 
--- References: from_symbol_id -> to_symbol_id
-CREATE TABLE references (
+-- References: from_symbol_id -> to_symbol_id ("references" is a reserved keyword in PostgreSQL)
+CREATE TABLE "references" (
     id BIGSERIAL PRIMARY KEY,
     from_symbol_id BIGINT NOT NULL REFERENCES symbols(id) ON DELETE CASCADE,
     to_symbol_id BIGINT NOT NULL REFERENCES symbols(id) ON DELETE CASCADE,
     ref_type VARCHAR(64) NOT NULL DEFAULT ''
 );
 
-CREATE INDEX idx_references_from ON references (from_symbol_id);
-CREATE INDEX idx_references_to ON references (to_symbol_id);
+CREATE INDEX idx_references_from ON "references" (from_symbol_id);
+CREATE INDEX idx_references_to ON "references" (to_symbol_id);
 
 -- Containment: parent_symbol_id contains child_symbol_id
 CREATE TABLE containment (

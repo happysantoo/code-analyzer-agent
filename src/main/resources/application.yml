@@ -1,3 +1,9 @@
+codeanalyzer:
+  clone:
+    # Base directory for temporary clone checkouts (default: system temp dir).
+    # Override with CODEANALYZER_CLONE_TEMP_DIR or codeanalyzer.clone.temp-dir.
+    temp-dir: ${CODEANALYZER_CLONE_TEMP_DIR:}
+
 spring:
   application:
     name: code-analyzer-agent
@@ -25,3 +31,12 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+
+# Logging: see what the app is doing (e.g. analyze_repository flow)
+logging:
+  level:
+    root: INFO
+    com.vajrapulse.agents.codeanalyzer: INFO
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

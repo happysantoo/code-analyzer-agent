@@ -13,6 +13,8 @@ This directory contains the design and feasibility documentation for the Code An
 | [05-java25-spring-ai.md](05-java25-spring-ai.md) | Java 25 as runtime, Spring Boot 4.x, Spring AI usage (MCP wiring, optional agent/RAG), and dependency sketch. |
 | [06-agent-gap-analysis.md](06-agent-gap-analysis.md) | What makes an "agent," what the current design is (MCP server), what is missing to become an agent, and options to close the gap. |
 | [07-vector-database-comparison.md](07-vector-database-comparison.md) | **Chosen database: PostgreSQL with pgvector.** Comparison of vector databases and rationale for the choice. |
+| [08-database-schema-and-relationships.md](08-database-schema-and-relationships.md) | **Database schema and ER.** Tables, relationships, sample data, and SQL to inspect snapshots, artifacts, symbols, and code_embeddings. |
+| [09-embeddings-and-why-ai.md](09-embeddings-and-why-ai.md) | **Embeddings and why we use AI.** What embeddings are, how they enable semantic search, and why an embedding model is needed to “make sense” of code and questions. |
 
 ## How the Documents Relate
 
@@ -20,5 +22,7 @@ This directory contains the design and feasibility documentation for the Code An
 - **MCP Feasibility** (04) and **Java 25 / Spring AI** (05) justify and specify the chosen technology and exposure model.
 - **Agent Gap Analysis** (06) clarifies the difference between the current "tool server" design and a full "agent," and how to close that gap if desired.
 - **Vector Database Comparison** (07) compares vector stores and recommends pgvector for storage and Q&A; use it when choosing or tuning the vector store.
+- **Database Schema** (08) documents the PostgreSQL schema, ER diagrams, and how to query the data.
+- **Embeddings and Why AI** (09) explains embedding models and semantic search for education and onboarding.
 
 Read in numerical order for a full narrative; use the index above to jump to a specific topic.

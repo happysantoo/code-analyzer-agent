@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class ProjectJdbcRepository implements ProjectRepository {
         if (project.id() != null) return project;
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
-            var ps = con.prepareStatement("INSERT INTO projects (name, description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            var ps = con.prepareStatement("INSERT INTO projects (name, description) VALUES (?, ?)", new String[]{"id"});
             ps.setString(1, project.name());
             ps.setString(2, project.description());
             return ps;
