@@ -40,6 +40,20 @@ class CloneCodeRepositorySpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def "resolve rejects null repo URL"() {
+        when:
+        repo.resolve(null, "HEAD")
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def "constructor with null tempBase uses system temp dir"() {
+        when:
+        def r = new CloneCodeRepository(null)
+        then:
+        r != null
+    }
+
     def "resolve clones from file URL and returns commit and files"() {
         given:
         String fileUri = sourceRepo.toUri().toString()

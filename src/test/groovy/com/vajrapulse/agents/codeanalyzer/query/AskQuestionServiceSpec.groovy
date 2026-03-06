@@ -63,4 +63,35 @@ class AskQuestionServiceSpec extends Specification {
         result.errorMessage().contains("no linked snapshots")
         0 * embedder.embed(_)
     }
+
+    def "ask returns error when snapshotId is zero or negative"() {
+        when:
+        def result = service.ask(0L, "valid question?", 10)
+        then:
+        result.hasError()
+        result.errorMessage().contains("valid snapshot_id")
+        0 * embedder.embed(_)
+
+        when:
+        def resultNeg = service.ask(-1L, "valid question?", 10)
+        then:
+        resultNeg.hasError()
+    }
+
+    def "askByProject embeds and searches when project has linked snapshots"() {
+        given:
+        def embedderStub = Stub(Embedder)
+        embedderStub.embed(_) >> [new float[1536]]
+        def repoMock = Mock(CodeEmbeddingRepository)
+        def projectMock = Mock(ProjectService)
+        projectMock.getSnapshotIdsForProject(3L) >> [1L, 2L]
+        repoMock.searchBySimilarity(_, _, 10) >> []
+        def svc = new AskQuestionService(embedderStub, repoMock, projectMock)
+        when:
+        def result = svc.askByProject(3L, "where is X?", 10)
+        then:
+        !result.hasError()
+        result.errorMessage() == null
+        1 * repoMock.searchBySimilarity(_, _, 10)
+    }
 }

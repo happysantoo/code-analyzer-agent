@@ -75,6 +75,28 @@ class WorkspaceCodeRepositorySpec extends Specification {
         snap.files().size() == 1
     }
 
+    def "resolve with blank ref uses HEAD"() {
+        given:
+        Git.init().setDirectory(tempDir.toFile()).call()
+        Files.writeString(tempDir.resolve("B.java"), "class B {}")
+        def git = Git.open(tempDir.toFile())
+        git.add().addFilepattern(".").call()
+        git.commit().setMessage("c2").call()
+        git.close()
+        when:
+        def snap = repo.resolve(tempDir.toString(), "   ")
+        then:
+        snap.commitSha() != null
+        snap.files().size() == 1
+    }
+
+    def "constructor with null fileExtensions uses default java ext"() {
+        when:
+        def repoWithDefault = new WorkspaceCodeRepository(null)
+        then:
+        repoWithDefault != null
+    }
+
     private static void deleteRecursively(Path path) {
         try {
             if (Files.exists(path)) {

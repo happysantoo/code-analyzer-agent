@@ -81,4 +81,15 @@ class ChunkingStrategySpec extends Specification {
         chunks.size() == 1
         chunks[0].span() == ""
     }
+
+    def "null spans uses empty span string for each symbol"() {
+        given:
+        def symbols = [new Symbol(1L, 1L, "R", "CLASS", "package")]
+        when:
+        def chunks = strategy.chunk(1L, "R.java", symbols, null)
+        then:
+        chunks.size() == 1
+        chunks[0].span() == ""
+        chunks[0].textToEmbed() == "CLASS package R"
+    }
 }

@@ -28,6 +28,10 @@ public class AskQuestionService {
     }
 
     public AskQuestionResult ask(long snapshotId, String question, int topK) {
+        if (snapshotId <= 0) {
+            return new AskQuestionResult(List.of(),
+                    "Provide a valid snapshot_id (from list_snapshots or analyze_repository), or use project_id to search over a project.");
+        }
         return ask(List.of(snapshotId), question, topK);
     }
 

@@ -16,6 +16,7 @@ This directory contains the design and feasibility documentation for the Code An
 | [08-database-schema-and-relationships.md](08-database-schema-and-relationships.md) | **Database schema and ER.** Tables, relationships, sample data, and SQL to inspect snapshots, artifacts, symbols, and code_embeddings. |
 | [09-embeddings-and-why-ai.md](09-embeddings-and-why-ai.md) | **Embeddings and why we use AI.** What embeddings are, how they enable semantic search, and why an embedding model is needed to make sense of code and questions. |
 | [10-testing-embedded-database.md](10-testing-embedded-database.md) | **Testing with H2.** Why integration tests use embedded H2 instead of Testcontainers; trade-offs and how the vector store is stubbed. |
+| [11-embedding-model-configuration.md](11-embedding-model-configuration.md) | **Pluggable embedding model.** How to enable a real embedding model via Spring AI starters (OpenAI, Ollama, etc.), 1536-dimension requirement, and example configuration. |
 
 ## How the Documents Relate
 
@@ -26,5 +27,6 @@ This directory contains the design and feasibility documentation for the Code An
 - **Database Schema** (08) documents the PostgreSQL schema, ER diagrams, and how to query the data.
 - **Embeddings and Why AI** (09) explains embedding models and semantic search for education and onboarding.
 - **Testing with Embedded Database** (10) explains the use of H2 for tests and why we do not rely on Testcontainers by default.
+- **Embedding Model Configuration** (11) describes how to configure a real, pluggable embedding model and the 1536-dimension constraint.
 
 Read in numerical order for a full narrative; use the index above to jump to a specific topic.

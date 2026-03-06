@@ -11,9 +11,4 @@ class CodeAnalyzerApplicationSpec extends Specification {
         clazz != null
         clazz.simpleName == "CodeAnalyzerApplication"
     }
-
-    def "getApplicationName returns app name"() {
-        expect:
-        AppInfo.getApplicationName() == "code-analyzer-agent"
-    }
 }

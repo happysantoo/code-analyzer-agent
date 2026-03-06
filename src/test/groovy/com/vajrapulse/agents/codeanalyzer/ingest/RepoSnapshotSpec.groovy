@@ -11,6 +11,15 @@ class RepoSnapshotSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def "RepoSnapshot with null files uses empty list"() {
+        when:
+        def snap = RepoSnapshot.of("sha1", null)
+        then:
+        snap.commitSha() == "sha1"
+        snap.files() != null
+        snap.files().isEmpty()
+    }
+
     def "RepoSnapshot copies files list"() {
         when:
         def entries = [FileEntry.of("a.java"), FileEntry.of("b.java", "content")]
