@@ -14,7 +14,8 @@ This directory contains the design and feasibility documentation for the Code An
 | [06-agent-gap-analysis.md](06-agent-gap-analysis.md) | What makes an "agent," what the current design is (MCP server), what is missing to become an agent, and options to close the gap. |
 | [07-vector-database-comparison.md](07-vector-database-comparison.md) | **Chosen database: PostgreSQL with pgvector.** Comparison of vector databases and rationale for the choice. |
 | [08-database-schema-and-relationships.md](08-database-schema-and-relationships.md) | **Database schema and ER.** Tables, relationships, sample data, and SQL to inspect snapshots, artifacts, symbols, and code_embeddings. |
-| [09-embeddings-and-why-ai.md](09-embeddings-and-why-ai.md) | **Embeddings and why we use AI.** What embeddings are, how they enable semantic search, and why an embedding model is needed to “make sense” of code and questions. |
+| [09-embeddings-and-why-ai.md](09-embeddings-and-why-ai.md) | **Embeddings and why we use AI.** What embeddings are, how they enable semantic search, and why an embedding model is needed to make sense of code and questions. |
+| [10-testing-embedded-database.md](10-testing-embedded-database.md) | **Testing with H2.** Why integration tests use embedded H2 instead of Testcontainers; trade-offs and how the vector store is stubbed. |
 
 ## How the Documents Relate
 
@@ -24,5 +25,6 @@ This directory contains the design and feasibility documentation for the Code An
 - **Vector Database Comparison** (07) compares vector stores and recommends pgvector for storage and Q&A; use it when choosing or tuning the vector store.
 - **Database Schema** (08) documents the PostgreSQL schema, ER diagrams, and how to query the data.
 - **Embeddings and Why AI** (09) explains embedding models and semantic search for education and onboarding.
+- **Testing with Embedded Database** (10) explains the use of H2 for tests and why we do not rely on Testcontainers by default.
 
 Read in numerical order for a full narrative; use the index above to jump to a specific topic.

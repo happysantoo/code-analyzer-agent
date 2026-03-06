@@ -13,9 +13,10 @@ import com.vajrapulse.agents.codeanalyzer.ingest.UrlOrPathCodeRepository;
 import com.vajrapulse.agents.codeanalyzer.ingest.WorkspaceCodeRepository;
 import com.vajrapulse.agents.codeanalyzer.store.CodeEmbeddingRepository;
 import com.vajrapulse.agents.codeanalyzer.store.JdbcCodeEmbeddingRepository;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.nio.file.Path;
@@ -59,6 +60,7 @@ public class IngestionConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean(CodeEmbeddingRepository.class)
     public CodeEmbeddingRepository codeEmbeddingRepository(JdbcTemplate jdbcTemplate) {
         return new JdbcCodeEmbeddingRepository(jdbcTemplate);
     }

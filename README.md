@@ -34,7 +34,7 @@ mvn clean verify
 
 - Unit tests use **Spock** (Groovy); coverage is enforced via **JaCoCo** (e.g. line coverage gate).
 - Reports: `mvn test` runs tests; `target/site/jacoco/index.html` for coverage after `mvn verify`.
-- **Full context test:** `CodeAnalyzerApplicationSpringBootTest` verifies the app starts with a real PostgreSQL+pgvector (Testcontainers). It is skipped unless `RUN_SPRING_BOOT_TEST=true` (e.g. when Docker is available). Run with: `RUN_SPRING_BOOT_TEST=true mvn test -Dtest=CodeAnalyzerApplicationSpringBootTest`.
+- **Integration tests** (Spock specs in package `com.vajrapulse.agents.codeanalyzer.integration`) use an **embedded H2** database (no Docker). The `test` profile applies an H2-compatible relational schema via Flyway; the vector store is stubbed so the full app context loads. See [documents/10-testing-embedded-database.md](documents/10-testing-embedded-database.md) for the choice of H2.
 
 ---
 
