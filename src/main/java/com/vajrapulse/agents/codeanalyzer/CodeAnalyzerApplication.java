@@ -4,8 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(excludeName = {
-        // Spring AI pgvector autoconfig references JdbcTemplateAutoConfiguration, which is not
-        // on the classpath in Spring Boot 4's modular setup; we use our own JdbcCodeEmbeddingRepository.
+        // We use our own JdbcCodeEmbeddingRepository; disable Spring AI's pgvector vector-store auto-config.
         "org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration"
 })
 public class CodeAnalyzerApplication {

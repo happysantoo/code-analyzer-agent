@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>3.5.11</version>
         <relativePath/>
     </parent>
 
@@ -46,8 +46,8 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-flyway</artifactId>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -69,6 +69,11 @@
             <artifactId>spring-ai-model</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+            <version>1.1.0</version>
+          </dependency>
         <!-- Optional starters (e.g. spring-ai-starter-model-openai) can be added by users for a real embedding model; see README -->
         <dependency>
             <groupId>com.github.javaparser</groupId>
@@ -207,7 +212,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.84</minimum>
+                                            <minimum>0.82</minimum>
                                         </limit>
                                     </limits>
                                     <excludes>

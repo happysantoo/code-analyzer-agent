@@ -1,0 +1,16 @@
+spring:
+  ai:
+    # Use Ollama as the embedding provider for this profile
+    model:
+      embedding: ollama
+    ollama:
+      # Ollama running locally on the same machine
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      embedding:
+        options:
+          # Default embedding model; must be pulled with `ollama pull nomic-embed-text`
+          model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+      init:
+        # Optionally auto-pull the model on startup in demo environments
+        pull-model-strategy: ${OLLAMA_PULL_MODEL_STRATEGY:when_missing}
+
