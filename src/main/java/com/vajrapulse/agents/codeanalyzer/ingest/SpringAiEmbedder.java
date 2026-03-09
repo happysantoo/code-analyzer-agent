@@ -10,11 +10,9 @@ import java.util.List;
 
 /**
  * Adapts Spring AI's {@link EmbeddingModel} to our {@link Embedder} interface.
- * Validates that the model returns 1536-dimensional vectors to match the schema.
+ * Accepts vectors of any dimension — the DB column is untyped {@code vector} (no fixed size).
  */
 public class SpringAiEmbedder implements Embedder {
-
-    private static final int REQUIRED_DIMENSION = 1536;
 
     private final EmbeddingModel embeddingModel;
 
@@ -35,13 +33,11 @@ public class SpringAiEmbedder implements Embedder {
                     "Embedding model returned " + (data == null ? "null" : data.size()) + " vectors, expected " + texts.size());
         }
         List<float[]> result = new ArrayList<>(data.size());
-        for (int i = 0; i < data.size(); i++) {
-            Embedding emb = data.get(i);
+        for (Embedding emb : data) {
             float[] vector = emb.getOutput();
-            if (vector == null || vector.length != REQUIRED_DIMENSION) {
+            if (vector == null || vector.length == 0) {
                 throw new IllegalArgumentException(
-                        "Embedding model must return vectors of dimension " + REQUIRED_DIMENSION
-                                + " (schema constraint); got " + (vector == null ? "null" : vector.length));
+                        "Embedding model returned a null or empty vector");
             }
             result.add(vector);
         }

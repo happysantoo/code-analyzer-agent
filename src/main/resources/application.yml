@@ -5,6 +5,8 @@ codeanalyzer:
     temp-dir: ${CODEANALYZER_CLONE_TEMP_DIR:}
 
 spring:
+  profiles:
+    default: ${SPRING_PROFILES_DEFAULT:demo-ollama}
   application:
     name: code-analyzer-agent
   datasource:

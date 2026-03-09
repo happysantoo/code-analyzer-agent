@@ -53,7 +53,7 @@ flowchart LR
 
 | Text | Role | Vector (conceptually) |
 |------|------|------------------------|
-| “Where is the main entry point?” | User question | e.g. [0.02, -0.1, 0.3, …] (1536 numbers) |
+| “Where is the main entry point?” | User question | e.g. [0.02, -0.1, 0.3, …] (N numbers) |
 | “METHOD public main” | Code chunk | e.g. [0.01, -0.09, 0.28, …] (close to the question) |
 | “FIELD private port” | Code chunk | e.g. [-0.2, 0.5, 0.1, …] (farther from the question) |
 
@@ -95,7 +95,7 @@ Embedding models are usually **neural networks** (e.g. transformers or simpler e
 
 1. **Input:** Tokenized text (words or subwords).
 2. **Network:** Multiple layers that combine tokens into a single vector (e.g. by averaging or using a special “[CLS]” token).
-3. **Output:** One vector per input (e.g. 1536 dimensions). Training (on large corpora) is done so that:
+3. **Output:** One vector per input (e.g. 768, 1024, or 1536 dimensions depending on the model). Training (on large corpora) is done so that:
    - Semantically similar sentences get similar vectors.
    - Dissimilar sentences get different vectors.
 
@@ -126,7 +126,7 @@ flowchart LR
 
 1. **Parse:** Source files are parsed into **symbols** (classes, methods, fields).
 2. **Chunk:** Each symbol becomes one **chunk** (short text, e.g. `CLASS public Foo`, `METHOD public run`).
-3. **Embed:** The **embedding model** turns each chunk into a vector (e.g. 1536 dimensions).
+3. **Embed:** The **embedding model** turns each chunk into a vector (with a model‑specific fixed dimension, e.g. 768 or 1536).
 4. **Store:** Vectors are stored in **PostgreSQL (pgvector)** in the `code_embeddings` table, along with **linkages** (`snapshot_id`, `artifact_id`, `symbol_id`, `file_path`, `span`, `kind`).
 
 The linkages are what let the app go from “this vector was similar” back to “this method in this file.”
@@ -187,7 +187,7 @@ flowchart TB
 | **ask_question** | Results are effectively random (no real ranking) | Results are ranked by relevance to the question |
 | **Use case** | Run the app without an API key; test ingest and API shape | Real semantic search and Q&A |
 
-So: **we need a real AI embedding model** to actually “make sense” of questions and return meaningfully ranked code. The stub is only for development and testing. To use a real model, add a Spring AI embedding starter (e.g. OpenAI or Ollama) and configure it; see [Embedding model configuration](11-embedding-model-configuration.md). The app requires **1536-dimensional** vectors (schema and adapter); use a model that outputs 1536 dimensions (e.g. OpenAI text-embedding-ada-002).
+So: **we need a real AI embedding model** to actually “make sense” of questions and return meaningfully ranked code. The stub is only for development and testing. To use a real model, add a Spring AI embedding starter (e.g. OpenAI or Ollama) and configure it; see [Embedding model configuration](11-embedding-model-configuration.md). The concrete dimension is chosen by the model (e.g. 768 or 1536); what matters is that ingest and query use the **same** model/dimension so vectors live in the same space.
 
 ```mermaid
 flowchart LR
@@ -243,7 +243,7 @@ The **dimension** is the length of the vector (number of floats). It’s fixed b
 - **Larger** (e.g. 1536): More capacity to encode fine-grained meaning; usually better quality, more storage and slightly more compute.
 - **Smaller** (e.g. 384): Faster and cheaper, but may lose nuance.
 
-This app uses **1536** to align with common APIs (e.g. OpenAI `text-embedding-ada-002`). The pgvector table is defined as `vector(1536)`, and the pluggable adapter (SpringAiEmbedder) validates that the model’s output dimension is 1536. If you switch to another model, it must produce 1536-dimensional vectors (or you need a schema change and re-embedding); see [Embedding model configuration](11-embedding-model-configuration.md).
+Historically, this app used **1536** to align with APIs like OpenAI `text-embedding-ada-002`, and the pgvector table was defined as `vector(1536)`. From migration `V3__flexible_embedding_dimension.sql` onward, the column is an untyped `vector`, and `SpringAiEmbedder` no longer enforces a specific length. If you switch models or dimensions, you should re‑run `analyze_repository` so all stored embeddings are regenerated with the new dimension; see [Embedding model configuration](11-embedding-model-configuration.md).
 
 ---
 

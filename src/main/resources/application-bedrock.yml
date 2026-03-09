@@ -1,0 +1,16 @@
+spring:
+  ai:
+    # Use AWS Bedrock Titan embeddings for this profile
+    model:
+      embedding: bedrock-titan
+    bedrock:
+      aws:
+        # Region and credentials for Bedrock; can also come from standard AWS env/SDK config
+        region: ${AWS_REGION:us-east-1}
+        access-key: ${AWS_ACCESS_KEY_ID:}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:}
+      titan:
+        embedding:
+          # Example Titan text embedding model; adjust as needed
+          model: ${BEDROCK_TITAN_EMBEDDING_MODEL:amazon.titan-embed-text-v2:0}
+

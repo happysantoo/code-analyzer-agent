@@ -14,11 +14,11 @@ class SpringAiEmbedderSpec extends Specification {
         call(_) >> { fixedResponse }
     }
 
-    def "embed returns vectors from model with dimension 1536"() {
+    def "embed returns vectors from model with any dimension"() {
         given:
-        def v1 = new float[1536]
+        def v1 = new float[768]
         v1[0] = 0.1f
-        def v2 = new float[1536]
+        def v2 = new float[768]
         v2[1] = 0.2f
         fixedResponse = new EmbeddingResponse([
                 new Embedding(v1, 0),
@@ -31,8 +31,8 @@ class SpringAiEmbedderSpec extends Specification {
 
         then:
         result.size() == 2
-        result[0].length == 1536
-        result[1].length == 1536
+        result[0].length == 768
+        result[1].length == 768
         result[0][0] == 0.1f
         result[1][1] == 0.2f
     }
@@ -53,10 +53,20 @@ class SpringAiEmbedderSpec extends Specification {
         result.isEmpty()
     }
 
-    def "embed throws when model returns wrong dimension"() {
+    def "embed throws when model returns null vector"() {
         given:
-        def wrongDim = new float[768]
-        fixedResponse = new EmbeddingResponse([new Embedding(wrongDim, 0)])
+        fixedResponse = new EmbeddingResponse([new Embedding(null as float[], 0)])
+
+        when:
+        new SpringAiEmbedder(embeddingModel).embed(["x"])
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def "embed throws when model returns empty vector"() {
+        given:
+        fixedResponse = new EmbeddingResponse([new Embedding(new float[0], 0)])
 
         when:
         new SpringAiEmbedder(embeddingModel).embed(["x"])
@@ -67,7 +77,7 @@ class SpringAiEmbedderSpec extends Specification {
 
     def "embed throws when model returns wrong count"() {
         given:
-        fixedResponse = new EmbeddingResponse([new Embedding(new float[1536], 0)])
+        fixedResponse = new EmbeddingResponse([new Embedding(new float[768], 0)])
 
         when:
         new SpringAiEmbedder(embeddingModel).embed(["a", "b"])
