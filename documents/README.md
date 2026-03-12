@@ -17,6 +17,8 @@ This directory contains the design and feasibility documentation for the Code An
 | [09-embeddings-and-why-ai.md](09-embeddings-and-why-ai.md) | **Embeddings and why we use AI.** What embeddings are, how they enable semantic search, and why an embedding model is needed to make sense of code and questions. |
 | [10-testing-embedded-database.md](10-testing-embedded-database.md) | **Testing with H2.** Why integration tests use embedded H2 instead of Testcontainers; trade-offs and how the vector store is stubbed. |
 | [11-embedding-model-configuration.md](11-embedding-model-configuration.md) | **Pluggable embedding model.** How to enable a real embedding model via Spring AI starters (OpenAI, Ollama, etc.), dimension considerations, and example configuration. |
+| [12-vector-store-migration-plan.md](12-vector-store-migration-plan.md) | **Migration plan.** Options and steps to move from the custom pgvector repository to Spring AI’s PgVectorStore; data model comparison and trade-offs. |
+| [13-sdlc-agent-integration.md](13-sdlc-agent-integration.md) | **SDLC agent integration.** How good this MCP is at answering questions about code, that it does not perform edits, and how a larger SDLC agent combines it with edit tools to make changes. |
 
 ## How the Documents Relate
 
@@ -28,5 +30,7 @@ This directory contains the design and feasibility documentation for the Code An
 - **Embeddings and Why AI** (09) explains embedding models and semantic search for education and onboarding.
 - **Testing with Embedded Database** (10) explains the use of H2 for tests and why we do not rely on Testcontainers by default.
 - **Embedding Model Configuration** (11) describes how to configure a real, pluggable embedding model and how embedding dimensions interact with the schema.
+- **Vector Store Migration Plan** (12) is a design doc for optionally adopting Spring AI’s PgVectorStore instead of the custom repository.
+- **SDLC Agent Integration** (13) explains how this MCP fits into a bigger SDLC agent: Q&A quality, read-only nature, and how to combine it with edit tools.
 
 Read in numerical order for a full narrative; use the index above to jump to a specific topic.
