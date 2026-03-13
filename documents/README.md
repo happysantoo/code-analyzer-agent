@@ -19,6 +19,9 @@ This directory contains the design and feasibility documentation for the Code An
 | [11-embedding-model-configuration.md](11-embedding-model-configuration.md) | **Pluggable embedding model.** How to enable a real embedding model via Spring AI starters (OpenAI, Ollama, etc.), dimension considerations, and example configuration. |
 | [12-vector-store-migration-plan.md](12-vector-store-migration-plan.md) | **Migration plan.** Options and steps to move from the custom pgvector repository to Spring AI’s PgVectorStore; data model comparison and trade-offs. |
 | [13-sdlc-agent-integration.md](13-sdlc-agent-integration.md) | **SDLC agent integration.** How good this MCP is at answering questions about code, that it does not perform edits, and how a larger SDLC agent combines it with edit tools to make changes. |
+| [14-copilot-cli-orchestration-design.md](14-copilot-cli-orchestration-design.md) | **Alternative design.** Architecture where this app drops embedded AI and delegates all intelligence to Copilot CLI; flowcharts, trade-offs, and a hybrid option. |
+| [15-sdlc-orchestrator-design.md](15-sdlc-orchestrator-design.md) | **SDLC orchestrator.** Full Jira-to-PR automation blueprint: task lifecycle state machine, Copilot CLI (ACP) integration, persistent context/memory across tasks, test-and-fix loop, incremental 10-week roadmap. |
+| [16-copilot-native-sdlc-agent.md](16-copilot-native-sdlc-agent.md) | **Copilot-native SDLC agent.** Zero-custom-server design using only Copilot Enterprise artifacts (AGENTS.md, copilot-instructions.md, GitHub Actions). Jira label triggers full Jira-to-PR flow via the Copilot Coding Agent with CONTEXT.md for task memory and patterns.md for cross-task learning. |
 
 ## How the Documents Relate
 
@@ -32,5 +35,8 @@ This directory contains the design and feasibility documentation for the Code An
 - **Embedding Model Configuration** (11) describes how to configure a real, pluggable embedding model and how embedding dimensions interact with the schema.
 - **Vector Store Migration Plan** (12) is a design doc for optionally adopting Spring AI’s PgVectorStore instead of the custom repository.
 - **SDLC Agent Integration** (13) explains how this MCP fits into a bigger SDLC agent: Q&A quality, read-only nature, and how to combine it with edit tools.
+- **Copilot CLI Orchestration Design** (14) is an alternative architecture where AI is fully delegated to Copilot CLI, with trade-offs and a hybrid option.
+- **SDLC Orchestrator Design** (15) expands (14) into a full Jira-to-PR orchestrator with state machine, context memory, Copilot ACP integration, test-and-fix loop, and a 10-increment delivery roadmap. This is the engineering blueprint for the next major evolution of the project.
+- **Copilot-Native SDLC Agent** (16) is an alternative to (15) that requires zero custom servers. It uses only GitHub Copilot Enterprise artifacts (AGENTS.md, GitHub Actions workflows) to achieve the same Jira-to-PR goal, with file-based context memory and a 5-week rollout plan.
 
 Read in numerical order for a full narrative; use the index above to jump to a specific topic.
