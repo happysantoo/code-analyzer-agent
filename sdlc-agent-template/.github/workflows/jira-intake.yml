@@ -1,0 +1,102 @@
+name: Jira Intake
+
+# Triggered by a Jira Automation rule when a story gets the "auto-dev" label.
+# Jira Automation action: send webhook POST to
+#   https://api.github.com/repos/{owner}/{repo}/dispatches
+# with body:
+#   {
+#     "event_type": "jira-story-ready",
+#     "client_payload": {
+#       "jira_key": "PROJ-1234",
+#       "summary": "Add email validation to signup form",
+#       "description": "Full story description...",
+#       "ac": "- Email must be validated\n- Invalid email returns 400",
+#       "labels": "backend,validation",
+#       "components": "auth-service"
+#     }
+#   }
+# Authorization header: Bearer <GitHub PAT with repo scope>
+
+on:
+  repository_dispatch:
+    types: [jira-story-ready]
+
+jobs:
+  create-issue-and-assign-copilot:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Validate payload
+        run: |
+          if [ -z "${{ github.event.client_payload.jira_key }}" ]; then
+            echo "ERROR: jira_key missing from payload"
+            exit 1
+          fi
+          if [ -z "${{ github.event.client_payload.summary }}" ]; then
+            echo "ERROR: summary missing from payload"
+            exit 1
+          fi
+
+      - name: Create GitHub Issue from Jira story
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const payload = context.payload.client_payload;
+            const {
+              jira_key,
+              summary,
+              description = '(no description provided)',
+              ac = '(no acceptance criteria provided)',
+              labels: jiraLabels = '',
+              components = ''
+            } = payload;
+
+            const jiraBaseUrl = process.env.JIRA_BASE_URL;
+
+            const body = [
+              `## Jira Story: [${jira_key}](${jiraBaseUrl}/browse/${jira_key})`,
+              '',
+              '### Summary',
+              summary,
+              '',
+              '### Acceptance Criteria',
+              ac,
+              '',
+              '### Description',
+              description,
+              '',
+              `**Labels:** ${jiraLabels || 'none'}`,
+              `**Components:** ${components || 'none'}`,
+            ].join('\n');
+
+            const issueLabels = ['auto-dev'];
+
+            // Add human-review label if the Jira story has the review flag
+            if (jiraLabels.includes('auto-dev-human-review')) {
+              issueLabels.push('auto-dev-human-review');
+            }
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `${jira_key}: ${summary}`,
+              body,
+              labels: issueLabels,
+            });
+
+            core.info(`Created issue #${issue.data.number}`);
+
+            // Assign the Copilot Coding Agent
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.data.number,
+              assignees: ['copilot'],
+            });
+
+            core.info(`Assigned Copilot to issue #${issue.data.number}`);
+            core.setOutput('issue_number', issue.data.number);
+        env:
+          JIRA_BASE_URL: ${{ vars.JIRA_BASE_URL }}

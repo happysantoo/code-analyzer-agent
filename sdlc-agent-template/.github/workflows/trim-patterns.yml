@@ -1,0 +1,73 @@
+name: Trim Patterns
+
+# Keeps .github/copilot/patterns.md from growing too large.
+# Runs weekly and whenever patterns.md is pushed to main.
+# Retains the preamble (everything before the first "## 20") and the 30 most recent entries.
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # every Sunday at 03:00 UTC
+  push:
+    branches: [main]
+    paths:
+      - '.github/copilot/patterns.md'
+  workflow_dispatch:
+
+jobs:
+  trim:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Count entries and trim if needed
+        run: |
+          set -euo pipefail
+          FILE=".github/copilot/patterns.md"
+          MAX_ENTRIES=30
+
+          # Count entries: lines starting with "## 20" are entry headers
+          ENTRY_COUNT=$(grep -c '^## 20' "$FILE" || true)
+
+          if [ "$ENTRY_COUNT" -le "$MAX_ENTRIES" ]; then
+            echo "Only $ENTRY_COUNT entries — no trimming needed."
+            exit 0
+          fi
+
+          echo "Found $ENTRY_COUNT entries. Trimming to $MAX_ENTRIES most recent..."
+
+          # Extract the preamble (everything before the first "## 20" entry)
+          PREAMBLE=$(awk '/^## 20/{exit} {print}' "$FILE")
+
+          # Extract only the last MAX_ENTRIES entry blocks
+          # Each entry starts with "## 20" and ends before the next "## 20"
+          ENTRIES=$(awk '/^## 20/{buf=""; count++} {buf=buf"\n"$0} END{
+            split(buf, lines, "\n## 20")
+            total = length(lines)
+            start = total - '"$MAX_ENTRIES"' + 1
+            if (start < 1) start = 1
+            for (i = start; i <= total; i++) {
+              if (i == start) print "## 20" lines[i]
+              else print "\n## 20" lines[i]
+            }
+          }' "$FILE")
+
+          {
+            echo "$PREAMBLE"
+            echo ""
+            echo "<!-- Trimmed to $MAX_ENTRIES most recent entries on $(date +%Y-%m-%d) -->"
+            echo ""
+            echo "$ENTRIES"
+          } > "$FILE"
+
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add "$FILE"
+          git diff --cached --quiet \
+            || git commit -m "chore: trim patterns.md to $MAX_ENTRIES entries [skip ci]"
+          git push

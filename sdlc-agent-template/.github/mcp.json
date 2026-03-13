@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "jira": {
+      "type": "http",
+      "url": "${JIRA_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer ${JIRA_API_TOKEN}"
+      },
+      "description": "Jira Cloud MCP server. Provides: get_issue, transition_issue, add_comment, search_issues."
+    }
+  }
+}

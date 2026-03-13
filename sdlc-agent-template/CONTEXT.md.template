@@ -1,0 +1,69 @@
+# Task Context: {JIRA-KEY}
+
+<!--
+  This file is created and maintained by the Copilot Coding Agent on the feature branch.
+  Each phase appends its findings. DO NOT edit manually while the agent is running.
+  This file is deleted (or left for reference) after the PR is merged.
+-->
+
+## [INTAKE] Story
+
+- **Jira Key:** {JIRA-KEY}
+- **Summary:** {one-line summary}
+- **Acceptance Criteria:**
+  - {AC point 1}
+  - {AC point 2}
+- **Labels:** {labels}
+- **Components:** {components}
+
+---
+
+## [UNDERSTAND] Codebase Analysis
+
+**Files to modify:**
+- `src/main/java/.../XxxController.java` — {reason}
+- `src/main/java/.../XxxService.java` — {reason}
+- `src/main/java/.../XxxRepository.java` — {reason}
+
+**Files to create:**
+- `src/main/java/.../XxxRequest.java` — {reason}
+
+**New Flyway migration needed:** yes/no
+- If yes: `V{N}__{description}.sql` — {what it does}
+
+**pom.xml changes needed:** yes/no
+- If yes: {dependency and reason}
+
+---
+
+## [PLAN] Implementation Steps
+
+1. {Step 1: file, what to change, why}
+2. {Step 2}
+3. {Step 3}
+4. Add/update `{XxxSpec.groovy}` to cover: {test scenarios}
+5. Add migration `V{N}__{description}.sql`: {SQL summary}
+
+---
+
+## [IMPLEMENT] Files Changed
+
+- `src/main/java/.../XxxController.java` ✅
+- `src/main/java/.../XxxService.java` ✅
+- `src/test/groovy/.../XxxSpec.groovy` ✅
+- `src/main/resources/db/migration/V{N}__{description}.sql` ✅
+
+---
+
+## [VALIDATE] Results
+
+- **Build (`mvn compile`):** PASS
+- **Tests (`mvn verify`):** {X} passed, 0 failed, 0 errors
+- **SonarQube:** {0 new issues / N issues fixed}
+
+---
+
+## [JENKINS] CI Status
+
+- **Build #{N}:** SUCCESS / FAILURE
+- **Build URL:** {url}

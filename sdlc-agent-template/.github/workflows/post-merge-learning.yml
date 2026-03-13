@@ -1,0 +1,56 @@
+name: Post-Merge Learning
+
+# After an auto-dev PR is merged into main, extract the files changed and append
+# a brief learning entry to .github/copilot/patterns.md so future tasks benefit.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  update-patterns:
+    # Only run when an auto-dev PR is actually merged (not just closed)
+    if: |
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'auto-dev')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Append learning entry to patterns.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+
+          DATE=$(date +%Y-%m-%d)
+          JIRA_KEY=$(echo "$PR_TITLE" | grep -oP '^[A-Z]+-[0-9]+' || echo "UNKNOWN")
+          SUMMARY=$(echo "$PR_TITLE" | sed "s/^${JIRA_KEY}: //")
+
+          # Collect changed files (top 15 to stay concise)
+          FILES=$(gh pr view "$PR_NUMBER" --json files \
+            --jq '[.files[].path] | join(", ")' \
+            | cut -c1-200)
+
+          ENTRY="\n## ${DATE} ${JIRA_KEY}: ${SUMMARY}\nFiles: ${FILES}\nAvoid: (fill in if issues were encountered)\nPrefer: (fill in what worked well)\n"
+
+          printf "$ENTRY" >> .github/copilot/patterns.md
+
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add .github/copilot/patterns.md
+          git diff --cached --quiet \
+            || git commit -m "chore: record patterns from ${JIRA_KEY} [skip ci]"
+          git push
